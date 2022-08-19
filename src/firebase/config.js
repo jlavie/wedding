@@ -23,6 +23,7 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
 const projectStorage = getStorage();
-const projectFirestore = getFirestore();
+const projectFirestore = getFirestore(app);
+const db = getFirestore(app);
 
-export { projectStorage, projectFirestore };
+export { projectStorage, projectFirestore, db };

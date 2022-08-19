@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { projectStorage, projectStorageRef } from "../firebase/config";
+import { projectStorage, db } from "../firebase/config";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const useStorage = (file) => {
     const [progress, setProgress] = useState(0);
@@ -11,6 +12,8 @@ const useStorage = (file) => {
         // ref ou est sauvegardé le fichier
         const storageRef = ref(projectStorage, file.name);
         const uploadTask = uploadBytesResumable(storageRef, file);
+        const collectionRef = collection(db, "images");
+
         uploadTask.on('state_changed', (snapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             console.log('Upload is ' + progress + '% done');
@@ -21,6 +24,9 @@ const useStorage = (file) => {
             // lancée quand le put est complete
             // async car on utilise await dans la fonction
             const url = await getDownloadURL(uploadTask.snapshot.ref);
+            const timestamp  = serverTimestamp()
+            await addDoc(collectionRef, {url, timestamp });
+
             setUrl(url);
             console.log('File available at', url);
         });
