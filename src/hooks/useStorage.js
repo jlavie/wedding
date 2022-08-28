@@ -16,7 +16,7 @@ const useStorage = (file) => {
 
         uploadTask.on('state_changed', (snapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
+            //console.log('Upload is ' + progress + '% done');
             setProgress(progress );
         }, (error) => {
             setError(error);
@@ -24,11 +24,12 @@ const useStorage = (file) => {
             // lancée quand le put est complete
             // async car on utilise await dans la fonction
             const url = await getDownloadURL(uploadTask.snapshot.ref);
+            const name = uploadTask.snapshot.ref.name;
             const timestamp  = serverTimestamp()
-            await addDoc(collectionRef, {url, timestamp });
+            await addDoc(collectionRef, {name, url, timestamp });
 
             setUrl(url);
-            console.log('File available at', url);
+            //console.log('File available at', url);
         });
     }, [file]);
 
